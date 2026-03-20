@@ -65,11 +65,13 @@ def vant_hoff_fit(temperatures_K: np.ndarray, solubilities: np.ndarray) -> dict:
         if delta_H > 0:
             flags.append("endothermic")
 
-        # Magnitude should be reasonable (-10 to -80 kJ/mol for physical absorption)
+        # Magnitude should be reasonable
+        # Physical absorption: -5 to -20 kJ/mol (typical for ILs)
+        # Chemical absorption: -40 to -80 kJ/mol (amine-based)
         if delta_H < -100:
             flags.append("deltaH_too_large")
-        elif -10 < delta_H < 0:
-            flags.append("deltaH_weak")  # Very weak absorption
+        elif -2 < delta_H < 0:
+            flags.append("deltaH_negligible")  # Essentially no absorption
 
         # Fit quality
         if r_squared < 0.7:
