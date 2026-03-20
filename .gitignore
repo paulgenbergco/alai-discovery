@@ -21,9 +21,9 @@ data/raw/
 *.pkl
 *.h5
 
-# Model artifacts (trained weights, not source code)
-/models/
-*.pt
+# Model artifacts — tracked for cloud screening (25MB total)
+# /models/
+# *.pt
 *.ckpt
 
 # Jupyter
