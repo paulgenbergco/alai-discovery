@@ -170,9 +170,17 @@ def main():
     # Load models
     models = load_ensemble()
 
-    # Load candidates
-    candidates = pd.read_parquet(GENERATED_DIR / "il_candidates.parquet")
-    logger.info(f"Loaded {len(candidates)} candidates")
+    # Load candidates — prefer merged (combinatorial + SELFIES) if available
+    all_path = GENERATED_DIR / "il_candidates_all.parquet"
+    combo_path = GENERATED_DIR / "il_candidates.parquet"
+    if all_path.exists():
+        candidates = pd.read_parquet(all_path)
+        logger.info(f"Loaded {len(candidates)} candidates (combinatorial + SELFIES)")
+    elif combo_path.exists():
+        candidates = pd.read_parquet(combo_path)
+        logger.info(f"Loaded {len(candidates)} candidates (combinatorial only)")
+    else:
+        raise FileNotFoundError("No candidate files found. Run generation first.")
 
     # Screen at standard conditions
     results = screen_candidates(
@@ -183,6 +191,23 @@ def main():
 
     # Rank
     ranked = rank_candidates(results)
+
+    # Van't Hoff physics validation on top 500 candidates
+    try:
+        from src.physics.vant_hoff import validate_candidates_physics
+        logger.info("Running Van't Hoff physics validation on top 500...")
+        top500 = ranked.head(500)
+        validated = validate_candidates_physics(top500, models, pressure_bar=10.0)
+        n_consistent = validated["physics_consistent"].sum()
+        logger.info(f"Physics consistent: {n_consistent}/500 top candidates")
+
+        # Merge physics columns back into ranked
+        physics_cols = ["physics_consistent", "delta_H_kJ_mol", "vant_hoff_r2", "physics_flags"]
+        for col in physics_cols:
+            if col in validated.columns:
+                ranked.loc[ranked.index[:500], col] = validated[col].values
+    except Exception as e:
+        logger.warning(f"Van't Hoff validation skipped: {e}")
 
     # Save results
     output_path = GENERATED_DIR / "candidates_ranked.parquet"
@@ -198,11 +223,16 @@ def main():
     logger.info(f"\n--- Screening Summary ---")
     logger.info(f"Total candidates screened: {len(results)}")
     logger.info(f"After filtering: {len(ranked)}")
+    if "source" in ranked.columns:
+        logger.info(f"By source:\n{ranked['source'].value_counts().to_string()}")
     logger.info(f"Top 10 candidates:")
     for _, row in ranked.head(10).iterrows():
+        physics = ""
+        if "physics_consistent" in row and pd.notna(row.get("physics_consistent")):
+            physics = " [PHYSICS OK]" if row["physics_consistent"] else " [PHYSICS WARN]"
         logger.info(f"  #{int(row['rank'])}: {row['cation_name']}-{row['anion_name']} "
                     f"x_CO2={row['co2_solubility_pred']:.4f} ± {row['uncertainty']:.3f} "
-                    f"({row['vs_mea']:+.1f}% vs MEA)")
+                    f"({row['vs_mea']:+.1f}% vs MEA){physics}")
 
 
 if __name__ == "__main__":
