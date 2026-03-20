@@ -76,11 +76,13 @@ def predict_batch(models, mols, features):
         preds = []
         with torch.no_grad():
             for batch in loader:
-                # Move batch components to GPU (Chemprop TrainingBatch has no .to())
+                # TrainingBatch is a NamedTuple (immutable), so rebuild it on GPU
                 if DEVICE.type == "cuda":
-                    batch.bmg = batch.bmg.to(DEVICE)
-                    if batch.X_d is not None:
-                        batch.X_d = batch.X_d.to(DEVICE)
+                    batch = batch._replace(
+                        bmg=batch.bmg.to(DEVICE),
+                        X_d=batch.X_d.to(DEVICE) if batch.X_d is not None else None,
+                        V_d=batch.V_d.to(DEVICE) if batch.V_d is not None else None,
+                    )
                 output = model.predict_step(batch, 0)
                 preds.extend(output.squeeze(-1).cpu().numpy().tolist())
         all_preds.append(preds)
