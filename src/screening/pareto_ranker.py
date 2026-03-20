@@ -76,6 +76,8 @@ def predict_batch(models, mols, features):
         preds = []
         with torch.no_grad():
             for batch in loader:
+                # Move batch data to same device as model (GPU if available)
+                batch = batch.to(DEVICE)
                 output = model.predict_step(batch, 0)
                 preds.extend(output.squeeze(-1).cpu().numpy().tolist())
         all_preds.append(preds)
