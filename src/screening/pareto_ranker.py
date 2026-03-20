@@ -76,10 +76,11 @@ def predict_batch(models, mols, features):
         preds = []
         with torch.no_grad():
             for batch in loader:
-                # TrainingBatch is a NamedTuple (immutable), so rebuild it on GPU
+                # Move data to GPU if available
+                # bmg.to() is in-place (no return), X_d needs _replace (NamedTuple)
                 if DEVICE.type == "cuda":
+                    batch.bmg.to(DEVICE)
                     batch = batch._replace(
-                        bmg=batch.bmg.to(DEVICE),
                         X_d=batch.X_d.to(DEVICE) if batch.X_d is not None else None,
                         V_d=batch.V_d.to(DEVICE) if batch.V_d is not None else None,
                     )
