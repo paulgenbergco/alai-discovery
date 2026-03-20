@@ -1,13 +1,15 @@
 """
-ALAi Discovery — Investor Demo
-================================
-Interactive Streamlit dashboard demonstrating the IL discovery pipeline.
+ALAi Discovery — Investor Demo (v2)
+=====================================
+Interactive Streamlit dashboard with multi-property optimization,
+Pareto analysis, and process conditions explorer.
 
 Usage:
     streamlit run src/demo/app.py
 """
 
 import io
+import json
 from pathlib import Path
 
 import numpy as np
@@ -21,38 +23,34 @@ from rdkit.Chem import Draw
 CURATED_DIR = Path("data/curated")
 GENERATED_DIR = Path("data/generated")
 
-st.set_page_config(
-    page_title="ALAi Discovery Engine",
-    page_icon="🧪",
-    layout="wide",
-)
+st.set_page_config(page_title="ALAi Discovery Engine", page_icon="🧪", layout="wide")
 
 
 @st.cache_data
 def load_curated_data():
-    if (CURATED_DIR / "co2_solubility_curated.parquet").exists():
-        return pd.read_parquet(CURATED_DIR / "co2_solubility_curated.parquet")
-    return None
-
+    p = CURATED_DIR / "co2_solubility_curated.parquet"
+    return pd.read_parquet(p) if p.exists() else None
 
 @st.cache_data
 def load_predictions(split_name):
-    path = CURATED_DIR / f"{split_name}_predictions.csv"
-    if path.exists():
-        return pd.read_csv(path)
-    return None
-
+    p = CURATED_DIR / f"{split_name}_predictions.csv"
+    return pd.read_csv(p) if p.exists() else None
 
 @st.cache_data
 def load_ranked_candidates():
-    path = GENERATED_DIR / "candidates_ranked.parquet"
-    if path.exists():
-        return pd.read_parquet(path)
+    p = GENERATED_DIR / "candidates_ranked.parquet"
+    return pd.read_parquet(p) if p.exists() else None
+
+@st.cache_data
+def load_process_explorer():
+    p = GENERATED_DIR / "process_explorer.json"
+    if p.exists():
+        with open(p) as f:
+            return json.load(f)
     return None
 
 
-def mol_to_svg(smiles, size=(300, 200)):
-    """Convert SMILES to PNG image bytes."""
+def mol_to_png(smiles, size=(300, 200)):
     mol = Chem.MolFromSmiles(smiles)
     if mol is None:
         return None
@@ -69,7 +67,8 @@ st.sidebar.title("ALAi Discovery Engine")
 st.sidebar.markdown("*AI-native materials discovery*")
 page = st.sidebar.radio(
     "Navigate",
-    ["Overview", "Model Performance", "Discovery Engine", "Top Candidates", "Physics Validation"],
+    ["Overview", "Model Performance", "Discovery Engine", "Top Candidates",
+     "Process Explorer", "Physics Validation"],
 )
 st.sidebar.markdown("---")
 st.sidebar.markdown("**Tech Stack**")
@@ -77,212 +76,181 @@ st.sidebar.markdown("Chemprop D-MPNN | RDKit | PyTorch")
 st.sidebar.markdown("Data: NIST ILThermo")
 
 # ============================================================================
-# Page: Overview
+# Overview
 # ============================================================================
 if page == "Overview":
     st.title("ALAi — AI-Driven Ionic Liquid Discovery")
     st.markdown("### Accelerating CO₂ capture materials discovery by 100x")
 
-    col1, col2, col3, col4, col5 = st.columns(5)
-
     curated = load_curated_data()
     ranked = load_ranked_candidates()
+    test_preds = load_predictions("test")
 
-    with col1:
-        n_data = len(curated) if curated is not None else 0
-        st.metric("Curated Data Points", f"{n_data:,}")
-    with col2:
-        n_ils = curated["smiles"].nunique() if curated is not None else 0
-        st.metric("Training ILs", n_ils)
-    with col3:
-        n_candidates = len(ranked) if ranked is not None else 0
-        st.metric("Candidates Screened", f"{n_candidates:,}")
-    with col4:
-        st.metric("Ensemble Models", "8")
-    with col5:
-        # Load test R2 if available
-        test_preds = load_predictions("test")
-        if test_preds is not None:
-            from sklearn.metrics import r2_score
-            r2 = r2_score(test_preds["actual"], test_preds["predicted"])
-            st.metric("Test R²", f"{r2:.3f}")
-        else:
-            st.metric("Test R²", "—")
+    cols = st.columns(5)
+    cols[0].metric("Curated Data Points", f"{len(curated):,}" if curated is not None else "0")
+    cols[1].metric("Training ILs", curated["smiles"].nunique() if curated is not None else 0)
+    cols[2].metric("Candidates Screened", f"{len(ranked):,}" if ranked is not None else "0")
+    cols[3].metric("Ensemble Models", "8 + 4 + 4")
+    if test_preds is not None:
+        from sklearn.metrics import r2_score
+        cols[4].metric("Test R²", f"{r2_score(test_preds['actual'], test_preds['predicted']):.3f}")
 
     st.markdown("---")
-
-    col_left, col_right = st.columns([3, 2])
-
-    with col_left:
-        st.markdown("""
+    col_l, col_r = st.columns([3, 2])
+    with col_l:
+        n_props = 1
+        has_visc = ranked is not None and "viscosity_pred" in ranked.columns
+        has_dens = ranked is not None and "density_pred" in ranked.columns
+        if has_visc: n_props += 1
+        if has_dens: n_props += 1
+        st.markdown(f"""
         **End-to-End Pipeline:**
-        1. **Data Curation** — 10,000+ data points from NIST ILThermo with physics-informed quality checks
-        2. **D-MPNN Training** — 8-model ensemble of Directed Message Passing Neural Networks
-        3. **Molecular Generation** — 98,000+ novel candidates via combinatorial enumeration + SELFIES mutations
-        4. **Property Prediction** — CO₂ solubility with ensemble uncertainty quantification
-        5. **Physics Validation** — Van't Hoff thermodynamic consistency checks
-        6. **Screening** — Multi-objective ranking to identify top candidates
+        1. **Data Curation** — 80,000+ data points from NIST ILThermo
+        2. **D-MPNN Training** — {n_props} property models (CO₂ solubility, {'viscosity, ' if has_visc else ''}{'density' if has_dens else ''})
+        3. **Molecular Generation** — 431,000+ candidates via combinatorial + SELFIES
+        4. **Multi-Property Prediction** — ensemble uncertainty quantification
+        5. **Physics Validation** — Van't Hoff thermodynamic consistency
+        6. **Pareto Optimization** — multi-objective ranking (solubility vs viscosity)
         """)
-
-    with col_right:
+    with col_r:
         if ranked is not None and "source" in ranked.columns:
-            source_counts = ranked["source"].value_counts()
-            fig = px.pie(
-                values=source_counts.values,
-                names=source_counts.index,
-                title="Candidate Sources",
-                color_discrete_sequence=["#0d9488", "#6366f1"],
-            )
-            fig.update_layout(height=300, margin=dict(t=40, b=0, l=0, r=0))
+            fig = px.pie(values=ranked["source"].value_counts().values,
+                        names=ranked["source"].value_counts().index,
+                        title="Candidate Sources",
+                        color_discrete_sequence=["#0d9488", "#6366f1"])
+            fig.update_layout(height=280, margin=dict(t=40, b=0, l=0, r=0))
             st.plotly_chart(fig, use_container_width=True)
 
     if curated is not None:
-        st.markdown("### Training Data Distribution")
-        col1, col2 = st.columns(2)
-        with col1:
-            fig = px.histogram(
-                curated, x="target", nbins=50,
-                title="CO₂ Solubility Distribution (mole fraction)",
-                labels={"target": "CO₂ Mole Fraction", "count": "Count"},
-                color_discrete_sequence=["#0d9488"],
-            )
-            fig.update_layout(showlegend=False, height=350)
+        st.markdown("### Training Data")
+        c1, c2 = st.columns(2)
+        with c1:
+            fig = px.histogram(curated, x="target", nbins=50,
+                             title="CO₂ Solubility Distribution",
+                             labels={"target": "CO₂ Mole Fraction"},
+                             color_discrete_sequence=["#0d9488"])
+            fig.update_layout(showlegend=False, height=300)
             st.plotly_chart(fig, use_container_width=True)
-        with col2:
-            fig = px.scatter(
-                curated, x="temperature_K", y="pressure_bar",
-                color="target", color_continuous_scale="Viridis",
-                title="Data Coverage: Temperature vs Pressure",
-                labels={"temperature_K": "Temperature (K)", "pressure_bar": "Pressure (bar)", "target": "x_CO₂"},
-                opacity=0.5,
-            )
-            fig.update_layout(height=350)
+        with c2:
+            fig = px.scatter(curated, x="temperature_K", y="pressure_bar",
+                           color="target", color_continuous_scale="Viridis",
+                           title="T/P Coverage",
+                           labels={"temperature_K": "Temperature (K)", "pressure_bar": "Pressure (bar)"},
+                           opacity=0.4)
+            fig.update_layout(height=300)
             st.plotly_chart(fig, use_container_width=True)
-
 
 # ============================================================================
-# Page: Model Performance
+# Model Performance
 # ============================================================================
 elif page == "Model Performance":
     st.title("D-MPNN Ensemble — Model Performance")
-    st.markdown("8-model ensemble with scaffold-split validation (structurally novel test molecules)")
 
+    # CO2 solubility models
     for split in ["val", "test"]:
         preds = load_predictions(split)
         if preds is None:
             continue
-
-        st.markdown(f"### {split.upper()} Set")
-
         from sklearn.metrics import r2_score, mean_squared_error
         r2 = r2_score(preds["actual"], preds["predicted"])
         rmse = np.sqrt(mean_squared_error(preds["actual"], preds["predicted"]))
-        mae = np.mean(np.abs(preds["actual"] - preds["predicted"]))
 
-        col1, col2, col3, col4 = st.columns(4)
-        col1.metric("R²", f"{r2:.4f}")
-        col2.metric("RMSE", f"{rmse:.4f}")
-        col3.metric("MAE", f"{mae:.4f}")
-        col4.metric("Data Points", len(preds))
+        st.markdown(f"### CO₂ Solubility — {split.upper()} Set")
+        c1, c2, c3 = st.columns(3)
+        c1.metric("R²", f"{r2:.4f}")
+        c2.metric("RMSE", f"{rmse:.4f}")
+        c3.metric("Points", len(preds))
 
-        # Parity plot
         fig = go.Figure()
-        fig.add_trace(go.Scatter(
-            x=preds["actual"], y=preds["predicted"],
-            mode="markers",
-            marker=dict(
-                size=6,
-                color=preds["uncertainty"],
-                colorscale="Viridis",
-                colorbar=dict(title="Uncertainty"),
-                opacity=0.7,
-            ),
-            text=[f"SMILES: {s}<br>Actual: {a:.3f}<br>Pred: {p:.3f}<br>Unc: {u:.3f}"
-                  for s, a, p, u in zip(preds["smiles"], preds["actual"],
-                                         preds["predicted"], preds["uncertainty"])],
-            hoverinfo="text",
-        ))
-
-        min_val = min(preds["actual"].min(), preds["predicted"].min())
-        max_val = max(preds["actual"].max(), preds["predicted"].max())
-        fig.add_trace(go.Scatter(
-            x=[min_val, max_val], y=[min_val, max_val],
-            mode="lines", line=dict(dash="dash", color="red"),
-            showlegend=False,
-        ))
-
-        fig.update_layout(
-            title=f"Predicted vs Actual — log₁₀(CO₂ Solubility) [{split.upper()}]",
-            xaxis_title="Actual log₁₀(x_CO₂)",
-            yaxis_title="Predicted log₁₀(x_CO₂)",
-            height=500,
-        )
+        fig.add_trace(go.Scatter(x=preds["actual"], y=preds["predicted"], mode="markers",
+                                marker=dict(size=5, color=preds["uncertainty"],
+                                           colorscale="Viridis", colorbar=dict(title="Unc."), opacity=0.7),
+                                hoverinfo="text",
+                                text=[f"Actual: {a:.3f}<br>Pred: {p:.3f}" for a, p in
+                                      zip(preds["actual"], preds["predicted"])]))
+        rng = [min(preds["actual"].min(), preds["predicted"].min()),
+               max(preds["actual"].max(), preds["predicted"].max())]
+        fig.add_trace(go.Scatter(x=rng, y=rng, mode="lines",
+                                line=dict(dash="dash", color="red"), showlegend=False))
+        fig.update_layout(title=f"Predicted vs Actual [{split.upper()}]",
+                         xaxis_title="Actual log₁₀(x_CO₂)", yaxis_title="Predicted log₁₀(x_CO₂)",
+                         height=450)
         st.plotly_chart(fig, use_container_width=True)
 
-        # Error distribution
-        errors = preds["predicted"] - preds["actual"]
-        fig2 = px.histogram(
-            x=errors, nbins=40,
-            title=f"Prediction Error Distribution [{split.upper()}]",
-            labels={"x": "Prediction Error (log₁₀)", "count": "Count"},
-            color_discrete_sequence=["#6366f1"],
-        )
-        fig2.update_layout(showlegend=False, height=300)
-        st.plotly_chart(fig2, use_container_width=True)
+    # Viscosity and density models
+    for prop in ["viscosity", "density"]:
+        prop_dir = CURATED_DIR / prop
+        pred_path = prop_dir / "test_predictions.csv"
+        if pred_path.exists():
+            preds = pd.read_csv(pred_path)
+            from sklearn.metrics import r2_score, mean_squared_error
+            r2 = r2_score(preds["actual"], preds["predicted"])
+            rmse = np.sqrt(mean_squared_error(preds["actual"], preds["predicted"]))
+            st.markdown(f"### {prop.title()} — TEST Set")
+            c1, c2, c3 = st.columns(3)
+            c1.metric("R²", f"{r2:.4f}")
+            c2.metric("RMSE", f"{rmse:.4f}")
+            c3.metric("Points", len(preds))
 
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=preds["actual"], y=preds["predicted"], mode="markers",
+                                    marker=dict(size=5, opacity=0.6, color="#6366f1")))
+            rng = [min(preds["actual"].min(), preds["predicted"].min()),
+                   max(preds["actual"].max(), preds["predicted"].max())]
+            fig.add_trace(go.Scatter(x=rng, y=rng, mode="lines",
+                                    line=dict(dash="dash", color="red"), showlegend=False))
+            unit = "log₁₀(mPa·s)" if prop == "viscosity" else "kg/m³"
+            fig.update_layout(title=f"Predicted vs Actual [{prop.title()}]",
+                             xaxis_title=f"Actual {unit}", yaxis_title=f"Predicted {unit}",
+                             height=400)
+            st.plotly_chart(fig, use_container_width=True)
 
 # ============================================================================
-# Page: Discovery Engine
+# Discovery Engine
 # ============================================================================
 elif page == "Discovery Engine":
-    st.title("Discovery Engine — Screen Novel IL Candidates")
+    st.title("Discovery Engine — Multi-Property Screening")
 
     ranked = load_ranked_candidates()
     if ranked is None:
-        st.warning("No screening results found. Run `python -m src.screening.pareto_ranker` first.")
+        st.warning("No screening results found.")
     else:
-        st.markdown(f"**{len(ranked):,} candidates** screened and ranked by CO₂ capture performance")
+        has_visc = "viscosity_pred" in ranked.columns
+        has_dens = "density_pred" in ranked.columns
 
-        # Controls
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            min_solubility = st.slider("Min CO₂ Solubility", 0.0, 0.5, 0.05, 0.01)
-        with col2:
-            max_uncertainty = st.slider("Max Uncertainty", 0.0, 1.0, 0.3, 0.05)
-        with col3:
-            source_filter = st.multiselect(
-                "Source",
-                options=ranked["source"].unique().tolist() if "source" in ranked.columns else ["all"],
-                default=ranked["source"].unique().tolist() if "source" in ranked.columns else ["all"],
-            )
+        st.markdown(f"**{len(ranked):,} candidates** scored on CO₂ solubility"
+                   f"{', viscosity' if has_visc else ''}{', density' if has_dens else ''}")
 
-        # Filter
-        filtered = ranked[
-            (ranked["co2_solubility_pred"] >= min_solubility) &
-            (ranked["uncertainty"] <= max_uncertainty)
-        ]
-        if "source" in filtered.columns and source_filter:
-            filtered = filtered[filtered["source"].isin(source_filter)]
+        # Filters
+        c1, c2, c3 = st.columns(3)
+        min_sol = c1.slider("Min CO₂ Solubility", 0.0, 0.5, 0.05, 0.01)
+        max_unc = c2.slider("Max Uncertainty", 0.0, 1.0, 0.3, 0.05)
+        source_opts = ranked["source"].unique().tolist() if "source" in ranked.columns else []
+        sources = c3.multiselect("Source", source_opts, default=source_opts) if source_opts else None
 
-        st.markdown(f"Showing **{len(filtered):,}** candidates matching filters")
+        filtered = ranked[(ranked["co2_solubility_pred"] >= min_sol) & (ranked["uncertainty"] <= max_unc)]
+        if sources:
+            filtered = filtered[filtered["source"].isin(sources)]
 
-        if len(filtered) > 0:
-            filtered = filtered.copy()
-            filtered["cation_type"] = filtered["cation_name"].str.split("-").str[0]
+        st.markdown(f"Showing **{len(filtered):,}** candidates")
+
+        # Main visualization: solubility vs viscosity (the key trade-off)
+        if has_visc and len(filtered) > 0:
+            plot_df = filtered.head(5000).copy()
+            plot_df["cation_type"] = plot_df["cation_name"].str.split("-").str[0]
 
             fig = px.scatter(
-                filtered.head(5000),
-                x="co2_solubility_pred",
-                y="uncertainty",
-                color="cation_type",
-                symbol="source" if "source" in filtered.columns else None,
-                hover_data=["cation_name", "anion_name", "molecular_weight", "vs_mea"],
-                title="Candidate Landscape: CO₂ Solubility vs Prediction Uncertainty",
+                plot_df, x="co2_solubility_pred", y="viscosity_pred",
+                color="pareto_front" if "pareto_front" in plot_df.columns else "cation_type",
+                size="molecular_weight" if has_dens else None,
+                hover_data=["cation_name", "anion_name", "vs_mea"],
+                title="CO₂ Solubility vs Viscosity — The Key Trade-off",
                 labels={
-                    "co2_solubility_pred": "Predicted CO₂ Solubility (mole fraction)",
-                    "uncertainty": "Ensemble Uncertainty (log₁₀)",
-                    "cation_type": "Cation Family",
+                    "co2_solubility_pred": "CO₂ Solubility (mole fraction)",
+                    "viscosity_pred": "Viscosity (mPa·s)",
+                    "pareto_front": "Pareto Optimal",
                 },
+                color_discrete_map={True: "#16a34a", False: "#94a3b8"} if "pareto_front" in plot_df.columns else None,
                 opacity=0.5,
             )
             fig.add_vline(x=0.20, line_dash="dash", line_color="red",
@@ -290,169 +258,259 @@ elif page == "Discovery Engine":
             fig.update_layout(height=600)
             st.plotly_chart(fig, use_container_width=True)
 
-            # Distribution by cation family
-            col1, col2 = st.columns(2)
-            with col1:
-                fig2 = px.box(
-                    filtered.head(5000), x="cation_type", y="co2_solubility_pred",
-                    title="CO₂ Solubility by Cation Family",
-                    labels={"cation_type": "Cation Family", "co2_solubility_pred": "x_CO₂"},
-                    color="cation_type",
-                )
-                fig2.update_layout(height=400, showlegend=False)
-                st.plotly_chart(fig2, use_container_width=True)
-            with col2:
-                anion_means = filtered.groupby("anion_name")["co2_solubility_pred"].mean().sort_values(ascending=True).tail(15)
-                fig3 = px.bar(
-                    x=anion_means.values, y=anion_means.index,
-                    orientation="h",
-                    title="Mean CO₂ Solubility by Anion (Top 15)",
-                    labels={"x": "Mean x_CO₂", "y": "Anion"},
-                    color_discrete_sequence=["#0d9488"],
-                )
-                fig3.update_layout(height=400)
-                st.plotly_chart(fig3, use_container_width=True)
+            st.markdown("""
+            **Reading this chart:** The ideal candidate is in the **top-left** — high CO₂ capture
+            AND low viscosity (easy to pump). Green points are Pareto-optimal: no other candidate
+            is better on BOTH metrics simultaneously.
+            """)
+        else:
+            # Fallback: solubility vs uncertainty
+            plot_df = filtered.head(5000).copy()
+            plot_df["cation_type"] = plot_df["cation_name"].str.split("-").str[0]
+            fig = px.scatter(plot_df, x="co2_solubility_pred", y="uncertainty",
+                           color="cation_type", opacity=0.5,
+                           title="CO₂ Solubility vs Uncertainty")
+            fig.add_vline(x=0.20, line_dash="dash", line_color="red",
+                         annotation_text="MEA Baseline")
+            fig.update_layout(height=500)
+            st.plotly_chart(fig, use_container_width=True)
 
+        # Breakdowns
+        c1, c2 = st.columns(2)
+        with c1:
+            plot_df = filtered.head(5000).copy()
+            plot_df["cation_type"] = plot_df["cation_name"].str.split("-").str[0]
+            fig = px.box(plot_df, x="cation_type", y="co2_solubility_pred",
+                        title="Solubility by Cation Family", color="cation_type")
+            fig.update_layout(height=350, showlegend=False)
+            st.plotly_chart(fig, use_container_width=True)
+        with c2:
+            anion_means = filtered.groupby("anion_name")["co2_solubility_pred"].mean().sort_values().tail(15)
+            fig = px.bar(x=anion_means.values, y=anion_means.index, orientation="h",
+                        title="Mean Solubility by Anion (Top 15)",
+                        color_discrete_sequence=["#0d9488"])
+            fig.update_layout(height=350)
+            st.plotly_chart(fig, use_container_width=True)
 
 # ============================================================================
-# Page: Top Candidates
+# Top Candidates
 # ============================================================================
 elif page == "Top Candidates":
     st.title("Top IL Candidates for CO₂ Capture")
 
     ranked = load_ranked_candidates()
     if ranked is None:
-        st.warning("No screening results found.")
+        st.warning("No results.")
     else:
-        top_n = st.selectbox("Show top N candidates", [10, 25, 50, 100], index=0)
-        top = ranked.head(top_n)
+        has_visc = "viscosity_pred" in ranked.columns
+        has_dens = "density_pred" in ranked.columns
+        has_pareto = "pareto_rank" in ranked.columns
 
-        # Summary table
-        display_cols = ["rank", "cation_name", "anion_name", "co2_solubility_pred",
-                       "uncertainty", "vs_mea", "molecular_weight"]
-        if "source" in top.columns:
-            display_cols.append("source")
-        if "physics_consistent" in top.columns:
-            display_cols.append("physics_consistent")
+        rank_by = st.radio("Rank by", ["CO₂ Solubility", "Pareto (Solubility + Low Viscosity)"] if has_pareto else ["CO₂ Solubility"], horizontal=True)
 
-        display_df = top[display_cols].copy()
-        col_names = {"rank": "Rank", "cation_name": "Cation", "anion_name": "Anion",
-                    "co2_solubility_pred": "x_CO₂", "uncertainty": "Unc.",
-                    "vs_mea": "% vs MEA", "molecular_weight": "MW",
-                    "source": "Source", "physics_consistent": "Physics OK"}
-        display_df = display_df.rename(columns=col_names)
-        if "x_CO₂" in display_df.columns:
-            display_df["x_CO₂"] = display_df["x_CO₂"].round(4)
-        if "Unc." in display_df.columns:
-            display_df["Unc."] = display_df["Unc."].round(3)
-        if "% vs MEA" in display_df.columns:
-            display_df["% vs MEA"] = display_df["% vs MEA"].round(1)
-        if "MW" in display_df.columns:
-            display_df["MW"] = display_df["MW"].round(1)
+        if rank_by.startswith("Pareto") and has_pareto:
+            display = ranked.dropna(subset=["pareto_rank"]).sort_values("pareto_rank")
+        else:
+            display = ranked
 
-        st.dataframe(display_df, use_container_width=True, hide_index=True)
+        top_n = st.selectbox("Show top", [10, 25, 50, 100], index=0)
+        top = display.head(top_n)
 
-        # Detailed view
+        # Table
+        cols = ["rank", "cation_name", "anion_name", "co2_solubility_pred", "co2_uncertainty", "vs_mea"]
+        names = {"rank": "Rank", "cation_name": "Cation", "anion_name": "Anion",
+                "co2_solubility_pred": "x_CO₂", "co2_uncertainty": "Unc.", "vs_mea": "% vs MEA"}
+        if has_visc:
+            cols += ["viscosity_pred"]
+            names["viscosity_pred"] = "Visc. (mPa·s)"
+        if has_dens:
+            cols += ["density_pred"]
+            names["density_pred"] = "Density"
+        if has_pareto:
+            cols += ["pareto_rank"]
+            names["pareto_rank"] = "Pareto Rank"
+
+        available_cols = [c for c in cols if c in top.columns]
+        tbl = top[available_cols].copy().rename(columns=names)
+        for c in ["x_CO₂", "Unc."]:
+            if c in tbl.columns:
+                tbl[c] = tbl[c].round(4)
+        if "% vs MEA" in tbl.columns:
+            tbl["% vs MEA"] = tbl["% vs MEA"].round(1)
+        if "Visc. (mPa·s)" in tbl.columns:
+            tbl["Visc. (mPa·s)"] = tbl["Visc. (mPa·s)"].round(1)
+        if "Density" in tbl.columns:
+            tbl["Density"] = tbl["Density"].round(1)
+
+        st.dataframe(tbl, use_container_width=True, hide_index=True)
+
+        # Detail view
         st.markdown("---")
         st.markdown("### Candidate Detail")
-
-        selected_rank = st.selectbox(
-            "Select a candidate to view",
+        selected_rank = st.selectbox("Select candidate",
             options=top["rank"].tolist(),
-            format_func=lambda x: f"#{x}: {top[top['rank']==x].iloc[0]['cation_name']}-{top[top['rank']==x].iloc[0]['anion_name']}",
-        )
+            format_func=lambda x: f"#{x}: {top[top['rank']==x].iloc[0]['cation_name']}-{top[top['rank']==x].iloc[0]['anion_name']}")
 
-        candidate = top[top["rank"] == selected_rank].iloc[0]
+        cand = top[top["rank"] == selected_rank].iloc[0]
+        c1, c2 = st.columns([1, 2])
 
-        col1, col2 = st.columns([1, 2])
+        with c1:
+            img = mol_to_png(cand["smiles"], size=(400, 300))
+            if img:
+                st.image(img, caption="Molecular Structure")
 
-        with col1:
-            img_bytes = mol_to_svg(candidate["smiles"], size=(400, 300))
-            if img_bytes:
-                st.image(img_bytes, caption="Molecular Structure")
+        with c2:
+            st.markdown(f"**SMILES:** `{cand['smiles']}`")
+            st.markdown(f"**Cation:** {cand['cation_name']}  |  **Anion:** {cand['anion_name']}")
 
-        with col2:
-            st.markdown(f"**SMILES:** `{candidate['smiles']}`")
-            st.markdown(f"**Cation:** {candidate['cation_name']}")
-            st.markdown(f"**Anion:** {candidate['anion_name']}")
-            if "source" in candidate.index:
-                st.markdown(f"**Source:** {candidate.get('source', 'unknown')}")
+            mc = st.columns(3)
+            mc[0].metric("CO₂ Solubility", f"{cand['co2_solubility_pred']:.4f}")
+            mc[1].metric("vs MEA", f"{cand['vs_mea']:+.1f}%")
+            mc[2].metric("CO₂ Uncertainty", f"±{cand.get('co2_uncertainty', cand.get('uncertainty', 0)):.3f}")
 
-            mcol1, mcol2, mcol3 = st.columns(3)
-            mcol1.metric("CO₂ Solubility", f"{candidate['co2_solubility_pred']:.4f}")
-            mcol2.metric("Uncertainty", f"±{candidate['uncertainty']:.3f}")
-            mcol3.metric("vs MEA", f"{candidate['vs_mea']:+.1f}%")
+            if has_visc or has_dens:
+                mc2 = st.columns(3)
+                if has_visc:
+                    mc2[0].metric("Viscosity", f"{cand['viscosity_pred']:.1f} mPa·s")
+                if has_dens:
+                    mc2[1].metric("Density", f"{cand['density_pred']:.0f} kg/m³")
+                if has_pareto and pd.notna(cand.get("pareto_rank")):
+                    mc2[2].metric("Pareto Rank", f"#{int(cand['pareto_rank'])}")
 
-            mcol4, mcol5 = st.columns(2)
-            mcol4.metric("Molecular Weight", f"{candidate['molecular_weight']:.1f} g/mol")
-            mcol5.metric("Conditions", f"T={candidate['temperature_K']:.0f}K, P={candidate['pressure_bar']:.0f} bar")
+            # Radar chart comparing to benchmarks
+            if has_visc:
+                mea_sol, mea_visc = 0.20, 2.0  # MEA benchmarks
+                categories = ["CO₂ Solubility", "Low Viscosity", "Low Uncertainty"]
+                cand_vals = [
+                    min(cand["co2_solubility_pred"] / 0.8, 1.0),  # Normalize to 0-1
+                    min(1.0 / (cand["viscosity_pred"] / 10 + 0.1), 1.0),
+                    min(1.0 / (cand.get("co2_uncertainty", 0.05) * 20 + 0.1), 1.0),
+                ]
+                mea_vals = [mea_sol / 0.8, 1.0 / (mea_visc / 10 + 0.1), 0.5]
 
-            if "physics_consistent" in candidate.index and pd.notna(candidate.get("physics_consistent")):
-                if candidate["physics_consistent"]:
-                    st.success("Thermodynamically consistent (Van't Hoff validated)")
-                else:
-                    flags = candidate.get("physics_flags", "")
-                    st.warning(f"Physics flags: {flags}")
-
-            if "delta_H_kJ_mol" in candidate.index and pd.notna(candidate.get("delta_H_kJ_mol")):
-                st.markdown(f"**Enthalpy of absorption:** {candidate['delta_H_kJ_mol']:.1f} kJ/mol")
-
+                fig = go.Figure()
+                fig.add_trace(go.Scatterpolar(r=cand_vals + [cand_vals[0]], theta=categories + [categories[0]],
+                                             fill='toself', name='This Candidate', fillcolor='rgba(13,148,136,0.3)',
+                                             line=dict(color='#0d9488')))
+                fig.add_trace(go.Scatterpolar(r=mea_vals + [mea_vals[0]], theta=categories + [categories[0]],
+                                             fill='toself', name='MEA Baseline', fillcolor='rgba(220,38,38,0.1)',
+                                             line=dict(color='#dc2626', dash='dash')))
+                fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+                                 title="Candidate vs MEA Benchmark", height=350)
+                st.plotly_chart(fig, use_container_width=True)
 
 # ============================================================================
-# Page: Physics Validation
+# Process Explorer
+# ============================================================================
+elif page == "Process Explorer":
+    st.title("Process Explorer — Temperature & Pressure Sensitivity")
+    st.markdown("See how CO₂ capture performance changes across operating conditions")
+
+    explorer_data = load_process_explorer()
+    if explorer_data is None:
+        st.info("Process explorer data not yet generated. Run `python -m src.screening.process_explorer`.")
+    else:
+        # Candidate selector
+        options = {f"#{d['rank']}: {d['cation_name']}-{d['anion_name']}": i
+                  for i, d in enumerate(explorer_data)}
+        selected = st.selectbox("Select candidate", list(options.keys()))
+        cand = explorer_data[options[selected]]
+
+        st.markdown(f"**SMILES:** `{cand['smiles']}`")
+
+        preds_df = pd.DataFrame(cand["predictions"])
+
+        # Pressure selector
+        pressure = st.select_slider("Pressure (bar)", options=sorted(preds_df["pressure_bar"].unique()),
+                                    value=10.0)
+
+        # Filter to selected pressure
+        at_pressure = preds_df[preds_df["pressure_bar"] == pressure]
+
+        c1, c2 = st.columns(2)
+        with c1:
+            fig = px.line(at_pressure, x="temperature_C", y="solubility",
+                         title=f"CO₂ Solubility vs Temperature (P={pressure} bar)",
+                         labels={"temperature_C": "Temperature (°C)", "solubility": "x_CO₂"},
+                         markers=True)
+            fig.add_hline(y=0.20, line_dash="dash", line_color="red",
+                         annotation_text="MEA Baseline")
+            fig.update_layout(height=400)
+            st.plotly_chart(fig, use_container_width=True)
+
+        with c2:
+            # Show all pressures as a family of curves
+            fig2 = px.line(preds_df, x="temperature_C", y="solubility",
+                          color="pressure_bar",
+                          title="Solubility at All Pressures",
+                          labels={"temperature_C": "Temperature (°C)", "solubility": "x_CO₂",
+                                 "pressure_bar": "P (bar)"},
+                          markers=True)
+            fig2.add_hline(y=0.20, line_dash="dash", line_color="red")
+            fig2.update_layout(height=400)
+            st.plotly_chart(fig2, use_container_width=True)
+
+        # 3D surface
+        temps = sorted(preds_df["temperature_C"].unique())
+        pressures = sorted(preds_df["pressure_bar"].unique())
+        z_matrix = np.zeros((len(pressures), len(temps)))
+        for i, p in enumerate(pressures):
+            for j, t in enumerate(temps):
+                row = preds_df[(preds_df["pressure_bar"] == p) & (preds_df["temperature_C"] == t)]
+                if len(row) > 0:
+                    z_matrix[i, j] = row.iloc[0]["solubility"]
+
+        fig3 = go.Figure(data=[go.Surface(z=z_matrix, x=temps, y=pressures,
+                                         colorscale="Viridis",
+                                         colorbar=dict(title="x_CO₂"))])
+        fig3.update_layout(title="CO₂ Solubility Surface",
+                          scene=dict(xaxis_title="Temperature (°C)",
+                                    yaxis_title="Pressure (bar)",
+                                    zaxis_title="x_CO₂"),
+                          height=500)
+        st.plotly_chart(fig3, use_container_width=True)
+
+# ============================================================================
+# Physics Validation
 # ============================================================================
 elif page == "Physics Validation":
     st.title("Van't Hoff Thermodynamic Validation")
     st.markdown("""
-    For each candidate, we predict CO₂ solubility at 5 temperatures (10-80°C) and fit the Van't Hoff equation:
-
+    For each candidate, we predict CO₂ solubility at 5 temperatures and fit:
     **ln(x_CO₂) = -ΔH_abs / (R·T) + ΔS / R**
 
-    A thermodynamically consistent candidate should have:
-    - **Negative ΔH** (exothermic CO₂ absorption)
-    - **Good fit quality** (R² > 0.7)
-    - **Reasonable magnitude** (-10 to -80 kJ/mol)
+    A consistent candidate has negative ΔH (exothermic absorption) and good fit quality.
     """)
 
     ranked = load_ranked_candidates()
     if ranked is None or "physics_consistent" not in ranked.columns:
-        st.info("Physics validation data not yet available. Run screening with Van't Hoff validation enabled.")
+        st.info("Physics validation data not available.")
     else:
         validated = ranked[ranked["physics_consistent"].notna()]
         if len(validated) == 0:
-            st.info("No physics validation results found.")
+            st.info("No results.")
         else:
-            n_consistent = validated["physics_consistent"].sum()
-            n_total = len(validated)
-
-            col1, col2, col3 = st.columns(3)
-            col1.metric("Validated Candidates", n_total)
-            col2.metric("Thermodynamically Consistent", int(n_consistent))
-            col3.metric("Consistency Rate", f"{n_consistent/n_total*100:.0f}%")
+            n_ok = int(validated["physics_consistent"].sum())
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Validated", len(validated))
+            c2.metric("Consistent", n_ok)
+            c3.metric("Rate", f"{n_ok/len(validated)*100:.0f}%")
 
             if "delta_H_kJ_mol" in validated.columns:
-                fig = px.histogram(
-                    validated, x="delta_H_kJ_mol", nbins=40,
-                    color="physics_consistent",
-                    title="Distribution of Absorption Enthalpy (ΔH_abs)",
-                    labels={"delta_H_kJ_mol": "ΔH_abs (kJ/mol)", "physics_consistent": "Physics OK"},
-                    color_discrete_map={True: "#16a34a", False: "#dc2626"},
-                )
-                fig.update_layout(height=400)
-                st.plotly_chart(fig, use_container_width=True)
-
-            if "vant_hoff_r2" in validated.columns:
-                fig2 = px.scatter(
-                    validated, x="co2_solubility_pred", y="delta_H_kJ_mol",
-                    color="physics_consistent",
-                    hover_data=["cation_name", "anion_name", "vant_hoff_r2"],
-                    title="CO₂ Solubility vs Absorption Enthalpy",
-                    labels={
-                        "co2_solubility_pred": "Predicted x_CO₂",
-                        "delta_H_kJ_mol": "ΔH_abs (kJ/mol)",
-                        "physics_consistent": "Physics OK",
-                    },
-                    color_discrete_map={True: "#16a34a", False: "#dc2626"},
-                )
-                fig2.update_layout(height=500)
-                st.plotly_chart(fig2, use_container_width=True)
+                c1, c2 = st.columns(2)
+                with c1:
+                    fig = px.histogram(validated, x="delta_H_kJ_mol", nbins=40,
+                                     color="physics_consistent",
+                                     title="Absorption Enthalpy Distribution",
+                                     labels={"delta_H_kJ_mol": "ΔH_abs (kJ/mol)"},
+                                     color_discrete_map={True: "#16a34a", False: "#dc2626"})
+                    fig.update_layout(height=350)
+                    st.plotly_chart(fig, use_container_width=True)
+                with c2:
+                    fig = px.scatter(validated, x="co2_solubility_pred", y="delta_H_kJ_mol",
+                                   color="physics_consistent",
+                                   title="Solubility vs Enthalpy",
+                                   labels={"co2_solubility_pred": "x_CO₂", "delta_H_kJ_mol": "ΔH (kJ/mol)"},
+                                   color_discrete_map={True: "#16a34a", False: "#dc2626"})
+                    fig.update_layout(height=350)
+                    st.plotly_chart(fig, use_container_width=True)
