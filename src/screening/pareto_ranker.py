@@ -20,6 +20,10 @@ from tqdm import tqdm
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
+# Auto-detect GPU: uses CUDA (NVIDIA GPU) if available, otherwise CPU
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+logger.info(f"Using device: {DEVICE}")
+
 MODEL_DIR = Path("models")
 GENERATED_DIR = Path("data/generated")
 CURATED_DIR = Path("data/curated")
@@ -44,7 +48,8 @@ def load_ensemble(model_dir: Path = None):
         agg = MeanAggregation()
         ffn = RegressionFFN(input_dim=300 + 2, hidden_dim=300, n_layers=2)
         model = MPNN(message_passing=mp, agg=agg, predictor=ffn)
-        model.load_state_dict(torch.load(model_path, weights_only=True))
+        model.load_state_dict(torch.load(model_path, weights_only=True, map_location=DEVICE))
+        model.to(DEVICE)  # Move model to GPU if available
         model.eval()
         models.append(model)
 
