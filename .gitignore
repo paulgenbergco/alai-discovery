@@ -15,9 +15,9 @@ env/
 
 # Data files (large, not tracked)
 data/raw/
-data/curated/
-data/generated/
-*.parquet
+# Keep curated data and ranked candidates for demo deployment
+# data/curated/
+# data/generated/
 *.pkl
 *.h5
 
