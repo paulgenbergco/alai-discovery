@@ -21,8 +21,8 @@ data/generated/
 *.pkl
 *.h5
 
-# Model artifacts
-models/
+# Model artifacts (trained weights, not source code)
+/models/
 *.pt
 *.ckpt
 
