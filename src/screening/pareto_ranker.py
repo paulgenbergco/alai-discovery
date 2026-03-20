@@ -53,7 +53,13 @@ def load_ensemble(model_dir: Path = None):
         model.eval()
         models.append(model)
 
+    # Verify models are actually on the right device
+    param_device = next(models[0].parameters()).device
     logger.info(f"Loaded {len(models)} models from {model_dir}")
+    logger.info(f"  Model parameter device: {param_device}")
+    if DEVICE.type == "cuda":
+        mem_mb = torch.cuda.memory_allocated() / 1e6
+        logger.info(f"  GPU memory used after loading: {mem_mb:.1f} MB")
     return models
 
 
@@ -72,10 +78,17 @@ def predict_batch(models, mols, features):
     loader = build_dataloader(dataset, batch_size=256, shuffle=False)
 
     all_preds = []
+    first_batch_logged = False
     for model in models:
         preds = []
         with torch.no_grad():
             for batch in loader:
+                # Log first batch details for debugging
+                if not first_batch_logged:
+                    logger.info(f"  BEFORE GPU transfer:")
+                    logger.info(f"    bmg.V device: {batch.bmg.V.device}")
+                    logger.info(f"    X_d device: {batch.X_d.device if batch.X_d is not None else 'None'}")
+
                 # Move data to GPU if available
                 # bmg.to() is in-place (no return), X_d needs _replace (NamedTuple)
                 if DEVICE.type == "cuda":
@@ -84,6 +97,15 @@ def predict_batch(models, mols, features):
                         X_d=batch.X_d.to(DEVICE) if batch.X_d is not None else None,
                         V_d=batch.V_d.to(DEVICE) if batch.V_d is not None else None,
                     )
+
+                if not first_batch_logged:
+                    logger.info(f"  AFTER GPU transfer:")
+                    logger.info(f"    bmg.V device: {batch.bmg.V.device}")
+                    logger.info(f"    X_d device: {batch.X_d.device if batch.X_d is not None else 'None'}")
+                    if DEVICE.type == "cuda":
+                        logger.info(f"    GPU memory: {torch.cuda.memory_allocated() / 1e6:.1f} MB")
+                    first_batch_logged = True
+
                 output = model.predict_step(batch, 0)
                 preds.extend(output.squeeze(-1).cpu().numpy().tolist())
         all_preds.append(preds)
