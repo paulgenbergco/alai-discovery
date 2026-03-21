@@ -1,0 +1,108 @@
+[
+  {
+    "name": "EMIM-OAc",
+    "predicted_co2": 0.6782,
+    "predicted_visc": 0.02,
+    "predicted_dens": 810.0,
+    "rank": 8,
+    "vs_mea": 239.1,
+    "uncertainty": 0.0334,
+    "experimental_co2": 0.35,
+    "smiles": "C1CNC1.CC(=O)[O-]",
+    "exp_source": "literature"
+  },
+  {
+    "name": "BMIM-OAc",
+    "predicted_co2": 0.6831,
+    "predicted_visc": 0.03,
+    "predicted_dens": 791.0,
+    "rank": 6,
+    "vs_mea": 241.6,
+    "uncertainty": 0.023,
+    "experimental_co2": 0.38,
+    "smiles": "C1CCOC1.CC(=O)[O-]",
+    "exp_source": "literature"
+  },
+  {
+    "name": "EMIM-NTf2",
+    "predicted_co2": 0.4399,
+    "predicted_visc": 0.02,
+    "predicted_dens": 1324.0,
+    "rank": 12381,
+    "vs_mea": 119.9,
+    "uncertainty": 0.0419,
+    "experimental_co2": 0.33,
+    "smiles": "CCNC=C(C)C.O=S(=O)([N-]S(=O)(=O)C(F)(F)F)C(F)(F)F",
+    "exp_source": "literature"
+  },
+  {
+    "name": "BMIM-NTf2",
+    "predicted_co2": 0.4299,
+    "predicted_visc": 0.03,
+    "predicted_dens": 1284.0,
+    "rank": 15274,
+    "vs_mea": 115.0,
+    "uncertainty": 0.042,
+    "experimental_co2": 0.38,
+    "smiles": "CCCCNC=C(C)C.O=S(=O)([N-]S(=O)(=O)C(F)(F)F)C(F)(F)F",
+    "exp_source": "literature"
+  },
+  {
+    "name": "BMIM-BF4",
+    "predicted_co2": 0.3301,
+    "predicted_visc": 0.06,
+    "predicted_dens": 941.0,
+    "rank": 79291,
+    "vs_mea": 65.1,
+    "uncertainty": 0.0646,
+    "experimental_co2": 0.22,
+    "smiles": "CCCCNC=C(C)C.F[B-](F)(F)F",
+    "exp_source": "literature"
+  },
+  {
+    "name": "EMIM-BF4",
+    "predicted_co2": 0.318,
+    "predicted_visc": 0.03,
+    "predicted_dens": 957.0,
+    "rank": 98185,
+    "vs_mea": 59.0,
+    "uncertainty": 0.0683,
+    "experimental_co2": 0.18,
+    "smiles": "CCNC=C(C)C.F[B-](F)(F)F",
+    "exp_source": "literature"
+  },
+  {
+    "name": "HMIM-NTf2",
+    "predicted_co2": 0.4255,
+    "predicted_visc": 0.03,
+    "predicted_dens": 1305.0,
+    "rank": 16943,
+    "vs_mea": 112.8,
+    "uncertainty": 0.0471,
+    "experimental_co2": 0.42,
+    "smiles": "CCCNC=C(C)C.O=S(=O)([N-]S(=O)(=O)C(F)(F)F)C(F)(F)F",
+    "exp_source": "literature"
+  },
+  {
+    "name": "P66614-NTf2",
+    "predicted_co2": 0.383,
+    "predicted_visc": 0.22,
+    "predicted_dens": 1102.0,
+    "rank": 34312,
+    "vs_mea": 91.5,
+    "uncertainty": 0.03,
+    "experimental_co2": null,
+    "smiles": "CCCCCCCCCCCCC[P+](CCCC)(CCCC)CCCCCC.O=S(=O)([N-]S(=O)(=O)C(F)(F)F)C(F)(F)F"
+  },
+  {
+    "name": "N4444-DCA",
+    "predicted_co2": 0.343,
+    "predicted_visc": 0.09,
+    "predicted_dens": 780.0,
+    "rank": 63471,
+    "vs_mea": 71.5,
+    "uncertainty": 0.0536,
+    "experimental_co2": null,
+    "smiles": "CCCCC(CCCC)CCCC.N#C[N-]C#N"
+  }
+]
