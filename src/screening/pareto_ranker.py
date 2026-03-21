@@ -75,9 +75,11 @@ def predict_batch(models, mols, features):
         for mol, feat in zip(mols, features)
     ]
     dataset = MoleculeDataset(data, featurizer=featurizer)
-    # Larger batch size to keep GPU busy; num_workers to parallelize CPU featurization
+    # Larger batch size to keep GPU busy; num_workers only on Linux (crashes on macOS)
+    import platform
     gpu_batch_size = 2048 if DEVICE.type == "cuda" else 256
-    loader = build_dataloader(dataset, batch_size=gpu_batch_size, shuffle=False, num_workers=2)
+    n_workers = 2 if DEVICE.type == "cuda" and platform.system() == "Linux" else 0
+    loader = build_dataloader(dataset, batch_size=gpu_batch_size, shuffle=False, num_workers=n_workers)
 
     all_preds = []
     for model in models:
