@@ -75,37 +75,22 @@ def predict_batch(models, mols, features):
         for mol, feat in zip(mols, features)
     ]
     dataset = MoleculeDataset(data, featurizer=featurizer)
-    loader = build_dataloader(dataset, batch_size=256, shuffle=False)
+    # Larger batch size to keep GPU busy; num_workers to parallelize CPU featurization
+    gpu_batch_size = 2048 if DEVICE.type == "cuda" else 256
+    loader = build_dataloader(dataset, batch_size=gpu_batch_size, shuffle=False, num_workers=2)
 
     all_preds = []
-    first_batch_logged = False
     for model in models:
         preds = []
         with torch.no_grad():
             for batch in loader:
-                # Log first batch details for debugging
-                if not first_batch_logged:
-                    logger.info(f"  BEFORE GPU transfer:")
-                    logger.info(f"    bmg.V device: {batch.bmg.V.device}")
-                    logger.info(f"    X_d device: {batch.X_d.device if batch.X_d is not None else 'None'}")
-
                 # Move data to GPU if available
-                # bmg.to() is in-place (no return), X_d needs _replace (NamedTuple)
                 if DEVICE.type == "cuda":
                     batch.bmg.to(DEVICE)
                     batch = batch._replace(
                         X_d=batch.X_d.to(DEVICE) if batch.X_d is not None else None,
                         V_d=batch.V_d.to(DEVICE) if batch.V_d is not None else None,
                     )
-
-                if not first_batch_logged:
-                    logger.info(f"  AFTER GPU transfer:")
-                    logger.info(f"    bmg.V device: {batch.bmg.V.device}")
-                    logger.info(f"    X_d device: {batch.X_d.device if batch.X_d is not None else 'None'}")
-                    if DEVICE.type == "cuda":
-                        logger.info(f"    GPU memory: {torch.cuda.memory_allocated() / 1e6:.1f} MB")
-                    first_batch_logged = True
-
                 output = model.predict_step(batch, 0)
                 preds.extend(output.squeeze(-1).cpu().numpy().tolist())
         all_preds.append(preds)
@@ -114,13 +99,20 @@ def predict_batch(models, mols, features):
     return all_preds.mean(axis=0), all_preds.std(axis=0)
 
 
-def _score_property(models, mols, features, batch_size=1000, desc="Scoring"):
+def _score_property(models, mols, features, batch_size=None, desc="Scoring"):
     """Score all molecules with an ensemble, batched."""
+    # On GPU, use much larger outer batches to reduce featurization overhead
+    if batch_size is None:
+        batch_size = 10000 if DEVICE.type == "cuda" else 1000
     all_means, all_stds = [], []
+    n_batches = (len(mols) + batch_size - 1) // batch_size
+    logger.info(f"  {desc}: {len(mols)} molecules in {n_batches} batches of {batch_size} (device={DEVICE})")
     for i in tqdm(range(0, len(mols), batch_size), desc=desc):
         means, stds = predict_batch(models, mols[i:i+batch_size], features[i:i+batch_size])
         all_means.extend(means)
         all_stds.extend(stds)
+        if i == 0 and DEVICE.type == "cuda":
+            logger.info(f"  First batch done. GPU memory: {torch.cuda.memory_allocated() / 1e6:.1f} MB")
     return np.array(all_means), np.array(all_stds)
 
 
