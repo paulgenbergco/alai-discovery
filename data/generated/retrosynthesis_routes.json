@@ -1,0 +1,802 @@
+[
+  {
+    "smiles": "C1CCCCC1.CC(=O)[O-]",
+    "cation_name": "SELFIES-BMPyr-mut",
+    "anion_name": "OAc",
+    "rank": 1,
+    "co2_solubility": 0.7584,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-BMPyr-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-BMPyr-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "C1#CCCC1.CC(=O)[O-]",
+    "cation_name": "SELFIES-N4444-mut",
+    "anion_name": "OAc",
+    "rank": 2,
+    "co2_solubility": 0.716,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-N4444-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-N4444-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CCCC[P+](CCCC)(CCCC)CCCC",
+    "cation_name": "PH-Bu-Bu-Bu-Bu",
+    "anion_name": "OAc",
+    "rank": 3,
+    "co2_solubility": 0.7066,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "60-75%",
+      "difficulty": "Moderate",
+      "cost_indicator": "$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization of trialkylphosphine with alkyl halide",
+          "reagents": [
+            "Trialkylphosphine (R\u2083P)",
+            "Alkyl halide (R'-X)"
+          ],
+          "conditions": "Heating at 100-150\u00b0C, 48h, sealed tube",
+          "product": "[PH-Bu-Bu-Bu-Bu][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion exchange with OAc",
+          "reagents": [
+            "Li/Na/K OAc",
+            "Methanol/water"
+          ],
+          "conditions": "Room temperature, stirring 12h",
+          "product": "[PH-Bu-Bu-Bu-Bu][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "C1#CCCCC1.CC(=O)[O-]",
+    "cation_name": "SELFIES-HMIM-mut",
+    "anion_name": "OAc",
+    "rank": 4,
+    "co2_solubility": 0.6911,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-HMIM-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-HMIM-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CCCC[P+](CCCC)(CCCC)CC(C)(C)C",
+    "cation_name": "PH-neoP-Bu-Bu-Bu",
+    "anion_name": "OAc",
+    "rank": 5,
+    "co2_solubility": 0.6852,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "60-75%",
+      "difficulty": "Moderate",
+      "cost_indicator": "$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization of trialkylphosphine with alkyl halide",
+          "reagents": [
+            "Trialkylphosphine (R\u2083P)",
+            "Alkyl halide (R'-X)"
+          ],
+          "conditions": "Heating at 100-150\u00b0C, 48h, sealed tube",
+          "product": "[PH-neoP-Bu-Bu-Bu][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion exchange with OAc",
+          "reagents": [
+            "Li/Na/K OAc",
+            "Methanol/water"
+          ],
+          "conditions": "Room temperature, stirring 12h",
+          "product": "[PH-neoP-Bu-Bu-Bu][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "C1CCOC1.CC(=O)[O-]",
+    "cation_name": "SELFIES-BMIM-mut",
+    "anion_name": "OAc",
+    "rank": 6,
+    "co2_solubility": 0.6831,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-BMIM-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-BMIM-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CCCCC(CCCC)CCCC",
+    "cation_name": "SELFIES-N4444-mut",
+    "anion_name": "OAc",
+    "rank": 7,
+    "co2_solubility": 0.6795,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-N4444-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-N4444-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "C1CNC1.CC(=O)[O-]",
+    "cation_name": "SELFIES-EMIM-mut",
+    "anion_name": "OAc",
+    "rank": 8,
+    "co2_solubility": 0.6782,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-EMIM-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-EMIM-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CCCC[PH+](CCCC)CCCC",
+    "cation_name": "SELFIES-P4444-mut",
+    "anion_name": "OAc",
+    "rank": 9,
+    "co2_solubility": 0.6724,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-P4444-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-P4444-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CCCC[P+](CCC)(CCCC)CCCC",
+    "cation_name": "PH-Pr-Bu-Bu-Bu",
+    "anion_name": "OAc",
+    "rank": 10,
+    "co2_solubility": 0.6658,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "60-75%",
+      "difficulty": "Moderate",
+      "cost_indicator": "$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization of trialkylphosphine with alkyl halide",
+          "reagents": [
+            "Trialkylphosphine (R\u2083P)",
+            "Alkyl halide (R'-X)"
+          ],
+          "conditions": "Heating at 100-150\u00b0C, 48h, sealed tube",
+          "product": "[PH-Pr-Bu-Bu-Bu][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion exchange with OAc",
+          "reagents": [
+            "Li/Na/K OAc",
+            "Methanol/water"
+          ],
+          "conditions": "Room temperature, stirring 12h",
+          "product": "[PH-Pr-Bu-Bu-Bu][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CCCCC[P+](CCCC)(CCCC)CCCC",
+    "cation_name": "PH-Bu-Bu-Bu-Pe",
+    "anion_name": "OAc",
+    "rank": 11,
+    "co2_solubility": 0.6649,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "60-75%",
+      "difficulty": "Moderate",
+      "cost_indicator": "$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization of trialkylphosphine with alkyl halide",
+          "reagents": [
+            "Trialkylphosphine (R\u2083P)",
+            "Alkyl halide (R'-X)"
+          ],
+          "conditions": "Heating at 100-150\u00b0C, 48h, sealed tube",
+          "product": "[PH-Bu-Bu-Bu-Pe][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion exchange with OAc",
+          "reagents": [
+            "Li/Na/K OAc",
+            "Methanol/water"
+          ],
+          "conditions": "Room temperature, stirring 12h",
+          "product": "[PH-Bu-Bu-Bu-Pe][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CCCCC(CCCC)CCCC1CCC1",
+    "cation_name": "SELFIES-P4444-mut",
+    "anion_name": "OAc",
+    "rank": 12,
+    "co2_solubility": 0.6628,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-P4444-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-P4444-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CCCCCC",
+    "cation_name": "SELFIES-P66614-mut",
+    "anion_name": "OAc",
+    "rank": 13,
+    "co2_solubility": 0.6605,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-P66614-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-P66614-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CCCCCCN=C(C)C",
+    "cation_name": "SELFIES-HMIM-mut",
+    "anion_name": "OAc",
+    "rank": 14,
+    "co2_solubility": 0.6595,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-HMIM-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-HMIM-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=[N-])[O-].CCCC[P+](CCCC)(CCCC)CCCC",
+    "cation_name": "P4444",
+    "anion_name": "SELFIES-OAc-mut",
+    "rank": 15,
+    "co2_solubility": 0.658,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "65-78%",
+      "difficulty": "Moderate",
+      "cost_indicator": "$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization of tributylphosphine with butyl bromide",
+          "reagents": [
+            "Tributylphosphine",
+            "1-Bromobutane"
+          ],
+          "conditions": "120\u00b0C, 48h, N\u2082",
+          "product": "[P\u2084\u2084\u2084\u2084][Br]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion exchange with SELFIES-OAc-mut",
+          "reagents": [
+            "LiSELFIES-OAc-mut or HSELFIES-OAc-mut",
+            "Methanol"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[P4444][SELFIES-OAc-mut]"
+        }
+      ],
+      "notes": "Standard anion exchange with SELFIES-OAc-mut salt.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CCCCC=C(C)C",
+    "cation_name": "SELFIES-BMIM-mut",
+    "anion_name": "OAc",
+    "rank": 16,
+    "co2_solubility": 0.6565,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-BMIM-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-BMIM-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CC1=CC2CCC2C1",
+    "cation_name": "SELFIES-BMIM-mut",
+    "anion_name": "OAc",
+    "rank": 17,
+    "co2_solubility": 0.6556,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-BMIM-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-BMIM-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CCCCC(CCC)(CCCC)CCCC",
+    "cation_name": "SELFIES-P4444-mut",
+    "anion_name": "OAc",
+    "rank": 18,
+    "co2_solubility": 0.6544,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-P4444-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-P4444-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CCCC[P+](CCN)(CCCC)CCCC",
+    "cation_name": "SELFIES-P4444-mut",
+    "anion_name": "OAc",
+    "rank": 19,
+    "co2_solubility": 0.6534,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "50-70%",
+      "difficulty": "Moderate-Hard (novel structure)",
+      "cost_indicator": "$$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization reaction (alkylation of base heterocycle)",
+          "reagents": [
+            "Base heterocycle",
+            "Alkyl halide"
+          ],
+          "conditions": "Reflux, 24-48h, inert atmosphere",
+          "product": "[SELFIES-P4444-mut][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion metathesis with OAc",
+          "reagents": [
+            "OAc salt/acid",
+            "Biphasic extraction"
+          ],
+          "conditions": "Room temperature, 24h",
+          "product": "[SELFIES-P4444-mut][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  },
+  {
+    "smiles": "CC(=O)[O-].CCCCC[P+](CCCC)(CCCC)CC(C)(C)C",
+    "cation_name": "PH-neoP-Bu-Bu-Pe",
+    "anion_name": "OAc",
+    "rank": 20,
+    "co2_solubility": 0.653,
+    "synthesis": {
+      "n_steps": 2,
+      "overall_yield": "60-75%",
+      "difficulty": "Moderate",
+      "cost_indicator": "$$",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Cation Formation",
+          "description": "Quaternization of trialkylphosphine with alkyl halide",
+          "reagents": [
+            "Trialkylphosphine (R\u2083P)",
+            "Alkyl halide (R'-X)"
+          ],
+          "conditions": "Heating at 100-150\u00b0C, 48h, sealed tube",
+          "product": "[PH-neoP-Bu-Bu-Pe][Halide]"
+        },
+        {
+          "step": 2,
+          "name": "Anion Exchange",
+          "description": "Anion exchange with OAc",
+          "reagents": [
+            "Li/Na/K OAc",
+            "Methanol/water"
+          ],
+          "conditions": "Room temperature, stirring 12h",
+          "product": "[PH-neoP-Bu-Bu-Pe][OAc]"
+        }
+      ],
+      "notes": "Acetate ILs: use silver acetate or ion exchange resin. Hygroscopic \u2014 handle under N\u2082.",
+      "purification": "Wash with water (3\u00d7), dry under vacuum at 60\u00b0C for 24h. Verify purity by \u00b9H NMR and Karl Fischer titration (water < 100 ppm)."
+    },
+    "source": "domain_knowledge"
+  }
+]
